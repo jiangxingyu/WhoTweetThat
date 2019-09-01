@@ -3,7 +3,7 @@ import codecs
 from sklearn import svm
 import numpy as np
 import csv
-import fastText
+import fasttext
 from sklearn.externals import joblib
 
 
@@ -32,7 +32,7 @@ from sklearn.externals import joblib
 # f3.close()
 # print ("all:",all," contains:",allrignt)
 #
-model = fastText.train_supervised(
+model = fasttext.train_supervised(
         input="new_train_tweets.txt", epoch=25, lr=1.0, wordNgrams=2, verbose=2, minCount=1
     )
 model.save_model("sml_model.ftz")
