@@ -12,10 +12,10 @@ for line in allContents:
 trainDataSet = allContents[:263146]
 testDataSet = allContents[263146:]
 
-newTrain = open('trainDataSet','a',encoding='utf-8')
+newTrain = open('trainDataSet','wb',encoding='utf-8')
 newTrain.writelines(trainDataSet)
 
-newTest = open('testDataSet','a',encoding='utf-8')
+newTest = open('testDataSet','wb',encoding='utf-8')
 newTest.writelines(testDataSet)
 
 newTrain.close()
