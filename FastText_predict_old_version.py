@@ -4,10 +4,8 @@ import csv
 import fasttext
 from sklearn.metrics import classification_report
 
-f = open('../2019S1-KTproj2-data/eval-tweets.txt','r', encoding='UTF-8')
-ft = open('../2019S1-KTproj2-data/eval-labels.txt','r', encoding='UTF-8')
-fn = open('eval_new.txt','w', encoding='UTF-8')
-model = fasttext.load_model("sml_model.ftz")
+
+model = fasttext.load_model("sml_model_o.ftz")
 
 # su = 0.0
 # right = 0.0
@@ -33,5 +31,9 @@ def print_results(N, p, r):
     print("N\t" + str(N))
     print("P@{}\t{:.3f}".format(1, p))
     print("R@{}\t{:.3f}".format(1, r))
+a = model.f.getArgs()
 
-print_results(*model.test('new_train_tweets.txt'))
+print("test")
+print_results(*model.test('new_train_tweets_all.txt'))
+# print_results(*model.test('new_train_tweets.txt'))
+

@@ -7,13 +7,13 @@ import fasttext
 from sklearn.externals import joblib
 
 
-# f = open('train_tweets.txt',encoding='utf-8')
-# f_labeled = open('new_train_tweets.txt','w',encoding='UTF-8')
-# for line2 in f:
-#     arr = line2.split("\t")
-#     newText = "__label__" + arr[0] +" "+ arr[1]
-#     f_labeled.write(newText+"\n")
-# f_labeled.close()
+f = open('trainDataSetALLShuff',encoding='utf-8')
+f_labeled = open('new_train_tweets_all.txt','w',encoding='UTF-8')
+for line2 in f:
+    arr = line2.split("\t")
+    newText = "__label__" + arr[0] +" "+ arr[1]
+    f_labeled.write(newText+"\n")
+f_labeled.close()
 
 # target = np.array(targetArray)
 # allrignt=0;
@@ -33,9 +33,9 @@ from sklearn.externals import joblib
 # print ("all:",all," contains:",allrignt)
 #
 model = fasttext.train_supervised(
-        input="new_train_tweets.txt", epoch=25, lr=1.0, wordNgrams=2, verbose=2, minCount=1
+        input="new_train_tweets_all.txt", epoch=30, lr=1, wordNgrams=2, verbose=2, minCount=1
     )
-model.save_model("sml_model.ftz")
+model.save_model("sml_model_all_v.ftz")
 
 print("done")
 
