@@ -1,6 +1,6 @@
 # train_tweets.txt 共328932条 80% 为263146 20%为65786
 import random
-# 第一次分割
+# 第一次处理
 # file = open('train_tweets.txt','r')
 # allContents = file.readlines()
 #
@@ -25,7 +25,7 @@ import random
 ###############################################################
 ###############################################################
 ###############################################################
-# 第二次分割
+# 第二次处理
 
 # # remove stopwords for test data set
 # # stopWordsSet = ['a','the','of','The','A','an','An']
@@ -86,10 +86,46 @@ import random
 #     print(finalStr)
 #     cleanedList.append(finalStr)
 #
-# newTest = open('trainDataSet2','w')
-# newTest.writelines(cleanedList)
-# newTest.close()
+# newTrain = open('trainDataSet2','w')
+# newTrain.writelines(cleanedList)
+# newTrain.close()
 
 ###############################################################
 ###############################################################
 ###############################################################
+#第三次处理
+# replace all url to '@HTTP' for testDataSet2
+
+# import re
+#
+# file = open('testDataSet2','r')
+# allContents = file.readlines()
+#
+# cleanedList = []
+# for line in allContents:
+#     tempStr = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',line)
+#     cleanedList.append(tempStr)
+#
+# newTest = open('testDataSet3.txt','a')
+# newTest.writelines(cleanedList)
+# newTest.close()
+
+###############################################################
+# replace all url to '@HTTP' for trainDataSet2
+
+# import re
+#
+# file = open('trainDataSet2.txt','r')
+# allContents = file.readlines()
+#
+# cleanedList = []
+# for i in range(len(allContents)):
+#     try:
+#         tempStr = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',allContents[i])
+#         cleanedList.append(tempStr)
+#     except:
+#         print('the error line is ' + str(i))
+#
+# newTrain = open('trainDataSet3.txt','w')
+# newTrain.writelines(cleanedList)
+# newTrain.close()
