@@ -64,7 +64,7 @@ with tf.Graph().as_default():
 
     # 定义会话
     with sess.as_default():
-        lstm = RCNN(config, wordEmbedding)
+        lstm = RCNN(config, wordEmbedding, data.wordEmbOri)
 
         globalStep = tf.Variable(0, name="globalStep", trainable=False)
         # 定义优化函数，传入学习速率参数
@@ -203,7 +203,7 @@ with tf.Graph().as_default():
         inputs = {"inputX": tf.saved_model.utils.build_tensor_info(lstm.inputX),
                   "keepProb": tf.saved_model.utils.build_tensor_info(lstm.dropoutKeepProb)}
 
-        outputs = {"predictions": tf.saved_model.utils.build_tensor_info(lstm.binaryPreds)}
+        outputs = {"predictions": tf.saved_model.utils.build_tensor_info(lstm.predictions)}
 
         prediction_signature = tf.saved_model.signature_def_utils.build_signature_def(inputs=inputs, outputs=outputs,
                                                                                       method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME)
@@ -216,7 +216,7 @@ with tf.Graph().as_default():
 
 
 
-
+        print("done")
 
 
 """

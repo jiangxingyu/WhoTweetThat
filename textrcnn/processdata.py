@@ -37,7 +37,7 @@ class Dataset(object):
         self.evalLabels = []
 
         self.wordEmbedding = None
-
+        self.wordEmbOri = None
         self.labelList = []
 
     def _readData(self, filePath):
@@ -145,22 +145,34 @@ class Dataset(object):
         """
 
         wordVec = gensim.models.KeyedVectors.load_word2vec_format("./word2Vec.bin", binary=True)
+        self.wordEmbOri = wordVec
         vocab = []
         wordEmbedding = []
 
         # 添加 "pad" 和 "UNK",
         vocab.append("PAD")
         vocab.append("UNK")
-        wordEmbedding.append(np.zeros(self._embeddingSize))
-        wordEmbedding.append(np.random.randn(self._embeddingSize))
 
-        for word in words:
+
+        # wordEmbedding.append(np.zeros(self._embeddingSize))
+        # wordEmbedding.append(np.random.randn(self._embeddingSize))
+        wordEmbedding = np.zeros((len(words), 100))
+        for i in range(len(words)):
+            this_word = words[i]
             try:
-                vector = wordVec.wv[word]
-                vocab.append(word)
-                wordEmbedding.append(vector)
-            except:
-                print(word + "不存在于词向量中")
+                this_vector = wordVec[this_word]
+            except KeyError:
+                this_vector = None
+                print(this_word + "不存在于词向量中")
+            if this_vector is not None:
+                wordEmbedding[i] = this_vector
+
+        # for word in words:
+        #     try:
+        #         vector = wordVec.wv[word]
+        #         vocab.append(word)
+        #         wordEmbedding.append(vector)
+        #     except:
 
         return vocab, np.array(wordEmbedding)
 

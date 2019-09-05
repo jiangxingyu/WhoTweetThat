@@ -13,22 +13,22 @@ class RCNN(object):
     RCNN 用于文本分类
     """
 
-    def __init__(self, config, wordEmbedding):
+    def __init__(self, config, wordEmbedding, weori):
 
         # 定义模型的输入
         self.inputX = tf.placeholder(tf.int32, [None, config.sequenceLength], name="inputX")
         self.inputY = tf.placeholder(tf.int32, [None], name="inputY")
 
         self.dropoutKeepProb = tf.placeholder(tf.float32, name="dropoutKeepProb")
-
+        self.weori = weori
         # 定义l2损失
         l2Loss = tf.constant(0.0)
 
         # 词嵌入层
         with tf.name_scope("embedding"):
-            self.W_text = tf.Variable(tf.random_uniform([vocab_size, word_embedding_size], -1.0, 1.0), name="W_text")
+            # self.W_text = tf.Variable(tf.random_uniform([vocab_size, word_embedding_size], -1.0, 1.0), name="W_text")
             # 利用预训练的词向量初始化词嵌入矩阵
-            self.W = tf.Variable(tf.cast(wordEmbedding, dtype=tf.float32, name="word2vec"), name="W")
+            self.W = tf.Variable(initial_value=tf.constant(wordEmbedding,dtype=tf.float32),trainable=False,name="W")
             # 利用词嵌入矩阵将输入的数据中的词转换成词向量，维度[batch_size, sequence_length, embedding_size]
             self.embeddedWords = tf.nn.embedding_lookup(self.W, self.inputX)
             # 复制一份embedding input
