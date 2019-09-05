@@ -1,8 +1,8 @@
 # 配置参数
 
 class TrainingConfig(object):
-    epoches = 10
-    evaluateEvery = 100
+    epoches = 3
+    evaluateEvery = 1
     checkpointEvery = 100
     learningRate = 0.001
 
@@ -22,7 +22,7 @@ class Config(object):
     sequenceLength = 200  # 取了所有序列长度的均值
     batchSize = 128
 
-    dataSource = "../data/ntrain.txt"
+    dataSource = "../data/train_tweets.txt"
 
     stopWordSource = "../data/english"
 
