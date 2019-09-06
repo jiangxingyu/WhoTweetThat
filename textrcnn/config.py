@@ -2,7 +2,7 @@
 
 class TrainingConfig(object):
     epoches = 10
-    evaluateEvery = 10
+    evaluateEvery = 30
     checkpointEvery = 100
     learningRate = 0.001
 
@@ -19,8 +19,8 @@ class ModelConfig(object):
 
 
 class Config(object):
-    sequenceLength = 38  # 取了所有序列长度的均值
-    batchSize = 128
+    sequenceLength = 30  # 取了所有序列长度的均值
+    batchSize = 12800
 
     dataSource = "../data/train_tweets.txt"
 

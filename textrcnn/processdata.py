@@ -163,12 +163,15 @@ class Dataset(object):
         # wordEmbedding.append(np.zeros(self._embeddingSize))
         # wordEmbedding.append(np.random.randn(self._embeddingSize))
         # wordEmbedding = np.zeros((len(words), 50))
+        # i=0
         for word in words:
             try:
-                if word not in vocab:
-                    vector = wordVec.wv[word]
-                    vocab.append(word)
-                    wordEmbedding.append(vector)
+                # print(i)
+                # i=i+1
+                # if word not in vocab:
+                vector = wordVec.wv[word]
+                vocab.append(word)
+                wordEmbedding.append(vector)
             except:
                 print(word + "不存在于词向量中")
 
