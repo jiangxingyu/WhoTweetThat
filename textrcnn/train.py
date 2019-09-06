@@ -214,8 +214,11 @@ def nextBatch(x, y, batchSize):
 config = Config()
 data = Dataset(config)
 data.dataGen()
+config.numClasses = (len(set(data.trainLabels)))
 # 训练模型
-
+print("hhhhh")
+print(config.numClasses)
+print("hhhhhh")
 # 生成训练集和验证集
 trainReviews = data.trainReviews
 trainLabels = data.trainLabels
@@ -235,6 +238,7 @@ with tf.Graph().as_default():
 
     # 定义会话
     with sess.as_default():
+        print("STARTTTTT")
         lstm = RCNN(config, wordEmbedding, data.wordEmbOri)
 
         globalStep = tf.Variable(0, name="globalStep", trainable=False)
@@ -292,16 +296,17 @@ with tf.Graph().as_default():
 
             if config.numClasses == 1:
                 acc, recall, prec, f_beta = get_binary_metrics(pred_y=predictions, true_y=batchY)
+                trainSummaryWriter.add_summary(summary, step)
+
+                return loss, acc, prec, recall, f_beta
 
 
             elif config.numClasses > 1:
                 acc, recall, prec, f_beta = get_multi_metrics(pred_y=predictions, true_y=batchY,
                                                               labels=labelList)
+                trainSummaryWriter.add_summary(summary, step)
 
-            trainSummaryWriter.add_summary(summary, step)
-
-            return loss, acc, prec, recall, f_beta
-
+                return loss, acc, prec, recall, f_beta
 
         def devStep(batchX, batchY):
             """
@@ -327,9 +332,6 @@ with tf.Graph().as_default():
                 evalSummaryWriter.add_summary(summary, step)
 
                 return loss, acc, precision, recall, f_beta
-
-
-
 
         for i in range(config.training.epoches):
             # 训练模型

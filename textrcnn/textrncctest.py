@@ -120,7 +120,7 @@ class RCNN(object):
             l2Loss += tf.nn.l2_loss(outputW)
             l2Loss += tf.nn.l2_loss(outputB)
             self.logits = tf.nn.xw_plus_b(output, outputW, outputB, name="logits")
-
+            print(config.numClasses)
             if config.numClasses == 1:
                 self.predictions = tf.cast(tf.greater_equal(self.logits, 0.0), tf.float32, name="predictions")
             elif config.numClasses > 1:

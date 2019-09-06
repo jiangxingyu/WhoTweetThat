@@ -123,10 +123,15 @@ class Dataset(object):
         words = allWords
         vocab, wordEmbedding = self._getWordEmbedding(words)
         self.wordEmbedding = wordEmbedding
-
+        word2idx=dict()
+        index=0
+        # for w in vocab:
+        #     word2idx[w]=index
+        #     index+=1
         word2idx = dict(zip(vocab, list(range(len(vocab)))))
 
         uniqueLabel = list(set(labels))
+        config.numClasses = len(uniqueLabel)
         label2idx = dict(zip(uniqueLabel, list(range(len(uniqueLabel)))))
         self.labelList = list(range(len(uniqueLabel)))
 
@@ -152,20 +157,20 @@ class Dataset(object):
         # 添加 "pad" 和 "UNK",
         vocab.append("PAD")
         vocab.append("UNK")
-
+        wordEmbedding.append(np.zeros(self._embeddingSize))
+        wordEmbedding.append(np.random.randn(self._embeddingSize))
 
         # wordEmbedding.append(np.zeros(self._embeddingSize))
         # wordEmbedding.append(np.random.randn(self._embeddingSize))
-        wordEmbedding = np.zeros((len(words), 100))
-        for i in range(len(words)):
-            this_word = words[i]
+        # wordEmbedding = np.zeros((len(words), 50))
+        for word in words:
             try:
-                this_vector = wordVec[this_word]
-            except KeyError:
-                this_vector = None
-                print(this_word + "不存在于词向量中")
-            if this_vector is not None:
-                wordEmbedding[i] = this_vector
+                if word not in vocab:
+                    vector = wordVec.wv[word]
+                    vocab.append(word)
+                    wordEmbedding.append(vector)
+            except:
+                print(word + "不存在于词向量中")
 
         # for word in words:
         #     try:

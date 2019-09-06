@@ -1,25 +1,25 @@
 # 配置参数
 
 class TrainingConfig(object):
-    epoches = 3
-    evaluateEvery = 1
+    epoches = 10
+    evaluateEvery = 10
     checkpointEvery = 100
     learningRate = 0.001
 
 
 class ModelConfig(object):
-    embeddingSize = 100
+    embeddingSize = 200
 
-    hiddenSizes = [128]  # LSTM结构的神经元个数
+    hiddenSizes = [512]  # LSTM结构的神经元个数
 
     dropoutKeepProb = 0.5
     l2RegLambda = 0.0
 
-    outputSize = 128  # 从高维映射到低维的神经元个数
+    outputSize = 512  # 从高维映射到低维的神经元个数
 
 
 class Config(object):
-    sequenceLength = 200  # 取了所有序列长度的均值
+    sequenceLength = 38  # 取了所有序列长度的均值
     batchSize = 128
 
     dataSource = "../data/train_tweets.txt"

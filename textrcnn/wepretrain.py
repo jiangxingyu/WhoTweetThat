@@ -9,7 +9,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 sentences = word2vec.Text8Corpus("../data/pretraindata.txt")
 
 # 训练模型，词向量的长度设置为200， 迭代次数为8，采用cbow模型，模型保存为bin格式
-model = gensim.models.Word2Vec(sentences, size=100, sg=1, iter=8, hs=1,min_count=1)
+model = gensim.models.Word2Vec(sentences, size=200, sg=1, iter=8, hs=1,min_count=1)
 model.wv.save_word2vec_format("./word2Vec" + ".bin", binary=True)
 
 # 加载bin格式的模型
