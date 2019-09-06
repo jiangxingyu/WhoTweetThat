@@ -153,28 +153,35 @@ class Dataset(object):
         self.wordEmbOri = wordVec
         vocab = []
         wordEmbedding = []
-
+        newvocab = []
+        newwordemb = []
         # 添加 "pad" 和 "UNK",
+        wordandembd = dict()
+
         vocab.append("PAD")
         vocab.append("UNK")
         wordEmbedding.append(np.zeros(self._embeddingSize))
         wordEmbedding.append(np.random.randn(self._embeddingSize))
-
+        wordandembd["PAD"] = np.zeros(self._embeddingSize)
+        wordandembd["UNK"] = np.random.randn(self._embeddingSize)
         # wordEmbedding.append(np.zeros(self._embeddingSize))
         # wordEmbedding.append(np.random.randn(self._embeddingSize))
         # wordEmbedding = np.zeros((len(words), 50))
         # i=0
+
         for word in words:
             try:
                 # print(i)
                 # i=i+1
                 # if word not in vocab:
                 vector = wordVec.wv[word]
-                vocab.append(word)
-                wordEmbedding.append(vector)
+                # vocab.append(word)
+                wordandembd[word]=vector
             except:
                 print(word + "不存在于词向量中")
 
+
+        print("processdata done")
         # for word in words:
         #     try:
         #         vector = wordVec.wv[word]
@@ -182,7 +189,7 @@ class Dataset(object):
         #         wordEmbedding.append(vector)
         #     except:
 
-        return vocab, np.array(wordEmbedding)
+        return list(wordandembd.keys()), np.array(list(wordandembd.values()))
 
     def _readStopWord(self, stopWordPath):
         """
