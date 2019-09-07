@@ -1,6 +1,6 @@
 import random
 import re
-
+import os
 import gensim
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,7 +16,15 @@ from urllib.request import urlopen
 file = open('../data/1kdata.txt','r',encoding='utf-8')
 allContents = file.readlines()
 wordVec = gensim.models.KeyedVectors.load_word2vec_format("../textrcnn/word2Vec.bin", binary=True)
-embeddings_file = '../glove.6B/glove.6B.300d.txt'.format(300)
+embeddings_file = '../glove.6B'
+embeddings_index={}
+f = open(os.path.join(embeddings_file, 'glove.6B.100d.txt'),'r',encoding='utf8')
+for line in f:
+    values = line.split()
+    word = values[0]
+    coefs = np.asarray(values[1:], dtype='float32')
+    embeddings_index[word] = coefs
+f.close()
 word2vec_output_file = '{0}.word2vec'.format(embeddings_file)
 glove2word2vec(embeddings_file, word2vec_output_file)
 glove = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
@@ -66,7 +74,7 @@ def getFeaturesAndLabel(lines):
                 if word in stopwords:
                     stopwordsNums+=1
                 try:
-                    vector = glove.index2word.index(word)
+                    vector = embeddings_index[word]
                     val += vector
                     num+=1
                 except Exception as e:

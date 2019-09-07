@@ -19,7 +19,7 @@ f_labeled.close()
 f.close()
 
 model = ft.train_supervised(
-        input="new_train_tweets.txt", autotuneValidationFile="new_test_tweets.txt", autotuneMetric="P@1",autotuneDuration=36000
+        input="new_train_tweets.txt", epoch=30, autotuneValidationFile="new_test_tweets.txt", autotuneMetric="f1",autotuneDuration=7200
     )
 model.save_model("sml_model.ftz")
 
