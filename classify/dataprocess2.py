@@ -18,10 +18,7 @@ from urllib.request import urlopen
 file = open('../data/train_tweets.txt','r',encoding='utf-8')
 allContents = file.readlines()
 # wordVec = gensim.models.KeyedVectors.load_word2vec_format("../textrcnn/word2Vec.bin", binary=True)
-embeddings_file = '../glove.6B/glove.6B.300d.txt'.format(300)
-word2vec_output_file = '{0}.word2vec'.format(embeddings_file)
-glove2word2vec(embeddings_file, word2vec_output_file)
-glove = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
+wordVec = None
 random.shuffle(allContents)
 splitPos = int(len(allContents)*0.99)
 train = allContents[:splitPos]
@@ -37,8 +34,8 @@ def getFeaturesAndLabelBow(lines,vectorizer,countVectorizer):
     labels=[]
     texts=[]
     for line in lines:
-        line = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',line)
         print(line)
+        line = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',line)
         cases = line.split("\t")
         # tokens = list(analyze(cases[1]))
         # newtokens=[]
@@ -48,10 +45,15 @@ def getFeaturesAndLabelBow(lines,vectorizer,countVectorizer):
         # texts.append(" ".join(newtokens).strip())
         texts.append(cases[1].strip())
         labels.append(cases[0].strip())
+    print("****************************************************************************")
+    tfidffeatures = countVectorizer.transform(texts)
+    print("=======================================================================================")
     tfidffeatures = countVectorizer.transform(texts)
     # pca = PCA(n_components=10000)
     # newtffeature = pca.fit_transform(tfidffeatures)
     # print(pca.explained_variance_ratio_)
+    
+    print(len(lines))
     return tfidffeatures, labels
 
 def getFeaturesAndLabel(lines):
@@ -119,20 +121,22 @@ vectorizer = TfidfVectorizer()
 vectorizer.fit(bowtraintext)
 countVectorizer.fit(bowtraintext)
 # print(len(countVectorizer.vocabulary))
-# trainFeatures, trainLabels = getFeaturesAndLabelBow(train,vectorizer,countVectorizer)
-# testFeatures, testLabels = getFeaturesAndLabelBow(test,vectorizer,countVectorizer)
-trainFeatures, trainLabels = getFeaturesAndLabel(train)
-testFeatures, testLabels = getFeaturesAndLabel(test)
+trainFeatures, trainLabels = getFeaturesAndLabelBow(train,vectorizer,countVectorizer)
+testFeatures, testLabels = getFeaturesAndLabelBow(test,vectorizer,countVectorizer)
+#trainFeatures, trainLabels = getFeaturesAndLabel(train)
+#testFeatures, testLabels = getFeaturesAndLabel(test)
+print("hahahhhhhhhh")
 print(len(set(trainLabels)))
 
 print("done")
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 
-# model = LogisticRegression()
-model = SGDClassifier(loss="log")
+model = LogisticRegression()
+#model = SGDClassifier(loss="log")
 # model = MultinomialNB()
 model.fit(trainFeatures, trainLabels)
+joblib.dump(model,"lgtest.m")
 prelabels = model.predict(testFeatures)
 right = 0.0
 all = 0.0
@@ -142,4 +146,3 @@ for i in range(len(prelabels)):
         right+=1
 
 print(right/all)
-joblib.dump(model,"lgtest.m")
