@@ -2,8 +2,10 @@ import random
 import re
 
 import gensim
+import joblib
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+from scipy.sparse import csr_matrix
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 from sklearn.naive_bayes import MultinomialNB
 from gensim.scripts.glove2word2vec import glove2word2vec
@@ -13,15 +15,15 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from zipfile import ZipFile
 from urllib.request import urlopen
-file = open('../data/1kdata.txt','r',encoding='utf-8')
+file = open('../data/train_tweets.txt','r',encoding='utf-8')
 allContents = file.readlines()
-wordVec = gensim.models.KeyedVectors.load_word2vec_format("../textrcnn/word2Vec.bin", binary=True)
+# wordVec = gensim.models.KeyedVectors.load_word2vec_format("../textrcnn/word2Vec.bin", binary=True)
 embeddings_file = '../glove.6B/glove.6B.300d.txt'.format(300)
 word2vec_output_file = '{0}.word2vec'.format(embeddings_file)
 glove2word2vec(embeddings_file, word2vec_output_file)
 glove = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
 random.shuffle(allContents)
-splitPos = int(len(allContents)*0.9)
+splitPos = int(len(allContents)*0.99)
 train = allContents[:splitPos]
 test = allContents[splitPos:]
 
@@ -30,18 +32,27 @@ newContents=[]
 labels = []
 wordfeatures = []
 
-def getFeaturesAndLabelBow(lines,vectorizer):
+def getFeaturesAndLabelBow(lines,vectorizer,countVectorizer):
+    analyze = countVectorizer.build_analyzer()
     labels=[]
     texts=[]
     for line in lines:
+        line = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',line)
         print(line)
         cases = line.split("\t")
-
-        texts.append(cases[1])
-        labels.append(cases[0])
-    features = vectorizer.transform(texts)
-
-    return features, labels
+        # tokens = list(analyze(cases[1]))
+        # newtokens=[]
+        # for t in tokens:
+        #     nt=re.sub("\s","",t)
+        #     newtokens.append(nt)
+        # texts.append(" ".join(newtokens).strip())
+        texts.append(cases[1].strip())
+        labels.append(cases[0].strip())
+    tfidffeatures = countVectorizer.transform(texts)
+    # pca = PCA(n_components=10000)
+    # newtffeature = pca.fit_transform(tfidffeatures)
+    # print(pca.explained_variance_ratio_)
+    return tfidffeatures, labels
 
 def getFeaturesAndLabel(lines):
     min = 0
@@ -88,23 +99,38 @@ def getFeaturesAndLabel(lines):
     return wordfeatures, labels
 
 bowtraintext=[]
+ngramtext=[]
+countVectorizer = CountVectorizer(ngram_range=(1, 2),dtype=np.int32)
+analyze = countVectorizer.build_analyzer()
+testind = 0
 for line in allContents:
+    print(testind)
+    testind+=1
     line = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''','@HTTP',line)
     cc = line.split("\t")
-    bowtraintext.append(cc[1])
+    # tokens = list(analyze(cc[1].strip()))
+    # newtokens=[]
+    # for t in tokens:
+    #     nt=re.sub("\s","",t)
+    #     newtokens.append(nt)
+    # nline = " ".join(newtokens).strip()
+    bowtraintext.append(cc[1].strip())
 vectorizer = TfidfVectorizer()
 vectorizer.fit(bowtraintext)
-
-trainFeatures, trainLabels = getFeaturesAndLabelBow(train,vectorizer)
-testFeatures, testLabels = getFeaturesAndLabelBow(test,vectorizer)
-# trainFeatures, trainLabels = getFeaturesAndLabel(train)
-# testFeatures, testLabels = getFeaturesAndLabel(test)
+countVectorizer.fit(bowtraintext)
+# print(len(countVectorizer.vocabulary))
+# trainFeatures, trainLabels = getFeaturesAndLabelBow(train,vectorizer,countVectorizer)
+# testFeatures, testLabels = getFeaturesAndLabelBow(test,vectorizer,countVectorizer)
+trainFeatures, trainLabels = getFeaturesAndLabel(train)
+testFeatures, testLabels = getFeaturesAndLabel(test)
 print(len(set(trainLabels)))
 
 print("done")
 from sklearn import metrics
-from sklearn.linear_model import LogisticRegression
-model = LogisticRegression(solver="sag",multi_class="ovr")
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+
+# model = LogisticRegression()
+model = SGDClassifier(loss="log")
 # model = MultinomialNB()
 model.fit(trainFeatures, trainLabels)
 prelabels = model.predict(testFeatures)
@@ -116,4 +142,4 @@ for i in range(len(prelabels)):
         right+=1
 
 print(right/all)
-# joblib.dump(model,"lgtest.m")
+joblib.dump(model,"lgtest.m")
