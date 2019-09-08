@@ -1,6 +1,6 @@
 import random
 import re
-
+import os
 import gensim
 import joblib
 import numpy as np
@@ -77,7 +77,7 @@ def getFeaturesAndLabel(lines):
                 if word in stopwords:
                     stopwordsNums+=1
                 try:
-                    vector = glove.index2word.index(word)
+                    vector = embeddings_index[word]
                     val += vector
                     num+=1
                 except Exception as e:
