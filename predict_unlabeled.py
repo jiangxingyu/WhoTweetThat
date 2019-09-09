@@ -3,9 +3,11 @@ import fasttext
 import csv
 
 
-model = fasttext.load_model("sml_model_all_v.ftz")
-f = open('test_tweets_unlabeled.txt',encoding='utf-8')
-stopwords = ["a","A","The","the"]
+model = fasttext.load_model("nft.ftz")
+f = open('data/test_tweets_unlabeled.txt',encoding='utf-8')
+stopwords = []
+
+# ["a","A","The","the"]
 
 f1 = open("smltest.csv", "w", newline="")
 writer = csv.writer(f1)

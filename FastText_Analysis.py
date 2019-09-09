@@ -9,7 +9,7 @@ import fasttext
 from sklearn.externals import joblib
 
 
-f = open('data/3W.txt',encoding='utf-8')
+f = open('data/train_tweets.txt',encoding='utf-8')
 f_labeled = open('new_train_tweets_all.txt','w',encoding='UTF-8')
 f_labeled2 = open('test_new.txt','w',encoding='UTF-8')
 lines = f.readlines()
@@ -45,13 +45,13 @@ f_labeled2.close()
 # f3.close()
 # print ("all:",all," contains:",allrignt)
 #
-# model = fasttext.train_supervised(
-#         input="new_train_tweets_all.txt", epoch=30, lr=1, wordNgrams=2, verbose=2, minCount=1
-#     )
-
 model = fasttext.train_supervised(
-        epoch=30,input="new_train_tweets_all.txt",autotuneValidationFile="test_new.txt", autotuneMetric="f1",autotuneDuration=1800
+        input="new_train_tweets_all.txt", wordNgrams=2, ws=5,verbose=2,thread=7,t=0.0001,neg=5,minn=2,minCountLabel=0,minCount=1,maxn=5,lrUpdateRate=100,epoch=30, lr=2.718532684931737, bucket=2534640,dim=107
     )
+
+# model = fasttext.train_supervised(
+#         epoch=30,input="new_train_tweets_all.txt",autotuneValidationFile="test_new.txt", autotuneMetric="f1",autotuneDuration=1800
+#     )
 a = model.f.getArgs()
 
 def print_results(N, p, r):
@@ -61,9 +61,9 @@ def print_results(N, p, r):
 # a = model.f.getArgs()
 
 print("test")
-model.save_model("ft.ftz")
+model.save_model("nft2.ftz")
 
-print_results(*model.test('test_new.txt'))
+# print_results(*model.test('test_new.txt'))
 # model.save_model("sml_model_all_v.ftz")
 
 print("done")
