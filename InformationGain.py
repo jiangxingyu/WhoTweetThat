@@ -5,8 +5,10 @@ emojiList = [':-\\)',';\\(',';\\)','\*_\*','\^_\^','-_-','-\.-',':\\(',':\\)']
 stopWordsList = ['a', 'the', 'of', 'for', 'to', 'at', 'in', 'on', 'and']
 
 import re
+from sklearn import tree
 
-file = open("train_tweets_new.txt", "r")
+
+file = open("data/train_tweets.txt", "r", encoding="utf-8")
 allContents = file.readlines()
 # counter = 0
 # for emoji in emojiList:
@@ -76,4 +78,8 @@ for each in allContents:
 
 print(len(labelList))
 print(len(featureList))
+clf = tree.DecisionTreeClassifier(criterion='entropy')
+clf.fit( featureList,labelList)
+print(clf.feature_importances_)
+
 
